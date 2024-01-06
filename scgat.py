@@ -33,12 +33,13 @@ class SCGATConv(MessagePassing):
         heads: int = 1,
         concat: bool = True,
         negative_slope: float = 0.2,
+        alpha_nn: torch.nn.Module=None, #NN for attention. if none then it is just a linear layer, without bias.
         dropout: float = 0.0,
         add_self_loops: bool = True,
         edge_dim: Optional[int] = None,
         fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
-        share_weights: bool = False,
+        share_weights: bool = True, # we want to apply the same transformation to every feature vector
         **kwargs,
     ):
         super(SCGATConv, self).__init__(node_dim=0, **kwargs)
@@ -182,7 +183,8 @@ class SCGATConv(MessagePassing):
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
     
-        x = torch.cat([x_i, x_j, x_i-x_j], dim=-1)
+        x = torch.cat([x_i, x_j, x_i-x_j], dim=-1) 
+
         if edge_attr is not None:
             if edge_attr.dim() == 1:
                 edge_attr = edge_attr.view(-1, 1)
@@ -192,7 +194,9 @@ class SCGATConv(MessagePassing):
             x = x + edge_attr
 
         x = F.leaky_relu(x, self.negative_slope)
+    
         alpha = (x * self.att).sum(dim=-1)
+    
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
