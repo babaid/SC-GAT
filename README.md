@@ -11,12 +11,9 @@ This particular repository is for the special type of Graph Attention Network th
 
 I think they have tried to implement it on their own instead of just reusing the torch_geometric GAT implementation(s). Using that makes it so easy that, I feel kind of dumb basically posting code of others with 3 lines of change, but let's concentrate on the ideas behind it. The GATv2Conv source code can be found [here](https://pytorch-geometric.readthedocs.io/en/latest/_modules/torch_geometric/nn/conv/gatv2_conv.html#GATv2Conv), I took the liberty to just update it with my own definition of attention weights. I will probably try some other ideas also.
 
-
-In my head when I think of this particular idea, first the EdgeConv layer comes to mind where at a message passing step we apply a MLP to [x_i, x_i-x_j]. This is pretty similar to how we start calculating the attention weights in a GAT ([x_i, x_j]). Now the second idea is to conserve both structural information, local features, global features and also use actual coordinates to learn what to pay attention to.
-
 Immediately we see how important this is for molecules.
 
-A more thourough explanation will follow in a notebook, where I will also include benchmarks and all that kind of stuff.
+Proper explanation of how this NN layer looks can be found in the test_gat.ipynb notebook.
 
 
 ## Using SCGAT 
