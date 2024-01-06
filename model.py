@@ -20,7 +20,7 @@ class SimpleGAT(torch.nn.Module):
 
 class BenchmarkGAT(torch.nn.Module):
     def __init__(self, in_channels:int, out_channels:int, heads:int, hidden_size:int):
-        super(SimpleGAT, self).__init__()
+        super(BenchmarkGAT, self).__init__()
         
         self.conv1 = GATConv(in_channels, hidden_size, heads)
         self.lin1 = torch.nn.Linear(hidden_size*heads, out_channels)
